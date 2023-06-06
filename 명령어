@@ -1,0 +1,10 @@
+nest g module boards
+nest : nest cli 를 사용한다
+g : 생성한다
+module : 모듈을 생성한다
+뒤에 이름은 생성할 모듈이름이다
+--no-spec : 테스트를 위한 소스 코드 생성
+controller : 컨트롤러
+service : 서비스
+파일을 원하는 곳에 만들기 그후에 nest new ./ 로 생성
+42252
