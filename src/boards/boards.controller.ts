@@ -3,82 +3,57 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
   UsePipes,
   ValidationPipe,
+  Logger,
+  Put,
+  Query,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
-import { BoardStatus } from './board-status.enum';
 import { CreateBoardDto } from './dto/create-board-dto';
-import { BoardStatusValidationPipe } from './pipes/board-status-validation.pipe';
-import { Board } from './board.entity';
+import { Board } from '../entitys/board.entity';
+import { UpdateBoardDto } from './dto/update-board-dto';
 
-@Controller('boards')
+@Controller('board')
 export class BoardsController {
+  private Logger = new Logger('BoardControllerが実行されています。');
   constructor(private boardsService: BoardsService) {}
 
-  // @Get()
-  // getAllBoard(): Board[] {
-  //   return this.boardsService.getAllBoards();
-  // }
-  //
-  // @Post()
-  // @UsePipes(ValidationPipe)
-  // createBoard(@Body() createBoardDto: CreateBoardDto): Board {
-  //   return this.boardsService.createBoards(createBoardDto);
-  // }
-  //
-  // // http://localhost:3000/id=123123
-  // @Get('/:id')
-  // getBoardById(@Param() DeleteBoardDto: DeleteBoardDto): Board {
-  //   const result = this.boardsService.getBoardById(DeleteBoardDto);
-  //
-  //   if (!result) {
-  //     throw new NotFoundException(`ここには入力できん ${DeleteBoardDto.id}`);
-  //   }
-  //   return result;
-  // }
   @Get()
-  getAllBoard(): Promise<Board[]> {
+  getAllBoard() {
+    // this.Logger.verbose(`User ${user.username} trying to get all board`);
     return this.boardsService.getAllBoard();
   }
-
-  @Get('/:id')
+  @Get('table')
+  pageNation(
+    @Query('index') index?: number,
+    @Query('sort') sort?: any,
+    @Query('order') order?: any,
+  ) {
+    return this.boardsService.pageNation(+index - 1, sort, order);
+  }
+  @Get(':id')
   getBoardById(@Param('id') id: number): Promise<Board> {
     return this.boardsService.getBoardByID(id);
   }
-
   @Post()
   @UsePipes(ValidationPipe)
   createBoard(@Body() CreateBoardDto: CreateBoardDto): Promise<Board> {
     return this.boardsService.createBoard(CreateBoardDto);
   }
-  @Delete('/:id')
+  @Delete(':id')
   deleteBoard(@Param('id', ParseIntPipe) id): Promise<void> {
     return this.boardsService.deleteBoard(id);
   }
 
-  @Patch('/:id/status')
+  @Put(':id')
   updateBoardStatus(
     @Param('id', ParseIntPipe) id: number,
-    @Body('status', BoardStatusValidationPipe) status: BoardStatus,
+    @Body() UpdateBoardDto: UpdateBoardDto,
   ) {
-    return this.boardsService.updateBoardStatus(id, status);
+    return this.boardsService.updateBoardStatus(id, UpdateBoardDto);
   }
-  // @Delete('/:id')
-  // deleteBoard(@Param('id') id: string): void {
-  //   return this.boardsService.deleteBoard(id);
-  // }
-  //
-  // @Patch('/:id/status')
-  // updateBoardStatus(
-  //   @Param('id') id: string,
-  //   @Body('status', BoardStatusValidationPipe) status: string,
-  // ) {
-  //   return this.boardsService.updateBoardStatus(id, status);
-  // }
 }

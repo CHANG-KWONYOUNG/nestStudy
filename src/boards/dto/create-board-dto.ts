@@ -1,4 +1,3 @@
-import { BoardStatus } from '../board-status.enum';
 import { IsNotEmpty } from 'class-validator';
 
 export class CreateBoardDto {
